@@ -1,0 +1,153 @@
+<!-- _templates/global/Task_instructions.html -->
+
+
+<div class="content-box box-task">
+    <div class="section-header text-center">
+    <h3>📋 The Emotion Recognition task</h3>
+    <hr class="section-divider">
+    </div>
+        
+<em>On this page, you will see the instructions shown to each worker.
+    You will get to practise this task but <b>your</b> performance in the task does not affect your payoff.
+Understanding the task is important for making your selection decision and thus maximising your payoff.</em><br><br>
+         <div class="section-box box-neutral">
+            <div class="section-header">
+              <h4>🧱 Basics</h4>
+              <p>On your screen, you will see <strong>16 blue squares</strong>. Each square represents a hidden
+              card which can be revealed by clicking on it. Your task is to find as many matching pairs of cards
+            as possible within the time limit.</p>
+                <center
+                <p>The task will rely on your <strong>emotion recognition</strong> skills.</p>
+                </center>
+            </div>
+
+        </div>
+
+        <div class="section-box box-neutral">
+          <div class="section-header">
+            <h4>🕹️ How to play</h4>
+          <ol>
+              <li>Click on a card to flip it over and see what's on it.</li>
+              <li>Click on another card to flip it over.</li>
+              <li><b>If the two cards match</b>, they will disappear.</li>
+              <li><b>If they do not match</b>, they will flip back over and be hidden again.</li>
+              <li>Repeat the above to find as many matching pairs in the time.</li>
+              <!--<li> Click on a square to reveal the information hidden on that card. </li>
+              <li> When you click on two cards that match, they remain uncovered and disappear. </li>
+              <li> If they do not match, they will be hidden again.</li>-->
+          </ol>
+          </div>
+
+        </div>
+
+        <div class="section-box box-info"><!--make the content variable by treatment-->
+          <div class="section-header">
+            <h4>🎯 What is a match</h4>
+            <p>The rule for matching pairs depends on the <strong>difficulty level</strong> of the cards.</p>
+
+              <hr class="section-divider">
+                  <strong>Easy level</strong><br>
+                  Each <em>easy</em> card shows either an image of a person displaying an emotion or an emotion word.<br>
+                  Two cards match if the emotion conveyed is the same as the emotion word.
+                  <br><br>
+                      <center>
+                          <div style="width: 55%; margin: 0 auto;">
+                          <div class="section-box box-white">
+      <table style="width:50%; border-collapse: collapse; margin: 0 auto;">
+        <tr>
+          <td style="width:50%; padding-right: 15px; vertical-align: middle;">
+            <img src="{{ static 'emotionrecognition/Round1/easy/deck1/Anger_4_emotion_none_easy.png' }}" style="width:150px; height:150px; object-fit:cover; border: 1px solid black;"" alt="Example of easy level card" />
+          </td>
+          <td style="width:50%; text-align: center; vertical-align: middle;">
+            <img src="{{ static 'emotionrecognition/Round1/easy/deck1/Anger_1_word_none_easy.png' }}" style="width:150px; height:150px; object-fit:cover; border: 1px solid black;"" alt="Example of easy level card" />
+          </td>
+        </tr>
+      </table>
+      <br>
+      <center>
+      These easy cards <strong>match</strong>.</center>
+  </div>
+  </div>
+    </center>
+
+
+              <hr class="section-divider">
+                  <strong>Hard level</strong><br>
+                  Each <em>hard</em> card also shows an emoji (😊 or ☹️).<br>
+                  Matching cards must also have the same emojis.
+                  <br><br>
+                      <center>
+                          <div style="width: 55%; margin: 0 auto;">
+                          <div class="section-box box-white">
+      <table style="width:50%; border-collapse: collapse; margin: 0 auto;">
+        <tr>
+          <td style="width:50%; padding-right: 15px; vertical-align: middle;">
+            <img src="{{ static 'emotionrecognition/Round3/deck6/Fear_3_emotion_sad_hard.png' }}" style="width:150px; height:150px; object-fit:cover; border: 1px solid black;"" alt="Example of hard level card" />
+          </td>
+          <td style="width:50%; text-align: center; vertical-align: middle;">
+            <img src="{{ static 'emotionrecognition/Round3/deck6/Fear_1_word_sad_hard.png' }}" style="width:150px; height:150px; object-fit:cover; border: 1px solid black;"" alt="Example of hard level card" />
+          </td>
+        </tr>
+      </table>
+      <br>
+      <center>
+      These hard cards <strong>match</strong>.</center>
+  </div>
+  </div>
+    </center>
+
+
+          </div>
+
+        </div>
+
+
+
+        <!--<div class="section-box box-calm">
+          <div class="section-header">
+
+            <h4 class="text-center mt-4"> 🔍Examples</h4>
+              <div class="task-example text-center mb-4">
+                <img src="{{ static 'graphics/ERM_Match_Illustration.png' }}" style="max-width:100%;" alt="Example of non-match and match" />
+              </div>
+
+
+              Above are two examples.
+              The first row of the image shows the procedure of uncovering a non-matching pair.
+              The second row of the image shows the procedure of uncovering a matching pair.
+
+              </div>
+          </div> -->
+
+    <div class="section-box box-neutral">
+          <div class="section-header">
+              <h4>❗ Important</h4>
+              <ul>
+            <li>You will see one set of cards at a time.</li>
+              <li>Each set contains 8 pairs (16 cards).</li>
+              <li>After you find all 8 pairs, a new set appears.</li>
+              <li>You can play up to 7 sets per round (the maximum score is 56).</li>
+              </ul>
+          </div>
+        </div>
+
+          <div class="section-box box-info">
+          <div class="section-header">
+
+          <h4> 🏆 Timing & Scoring:</h4>
+          <ul>
+            <li> Each round lasts <strong>two minutes</strong> (120 seconds). </li>
+            <li> You earn <strong>1 point</strong> per correct match.</li>
+            <li>The number of points you earn will affect your bonus.</li>
+          </ul>
+
+
+          </div>
+          </div>
+          
+
+
+
+    </div>
+  </div> 
+</div>     
