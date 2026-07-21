@@ -2,158 +2,26 @@ from otree.api import *
 import random
 import time
 from common import *
+import pandas as pd
 
 doc = '''
 This is the main survey app. It contains
 '''
+def draw_quartet_id_array():
+    path = "_static/quartets_python_binned.csv"  # adjust path if needed
+    quartets = pd.read_csv(path)
 
+    ids = quartets["quartet_id"].drop_duplicates().tolist()
+    ids = [int(i) for i in ids if int(i) != 1200]
 
-# ==== In‑memory data for treatments 2 and 10 ====
-# NOTE: First block you sent is now T10, second block is T2.
+    if len(ids) < 20:
+        raise ValueError(f"Need at least 20 quartet_ids excluding 1200, found {len(ids)}.")
 
-T10_ROWS = [
-    # row 0
-    dict(
-        groupid=3,
-        gender=[2, 1, 1, 2],
-        round2=[13, 10, 14, 11],
-        round3=[8, 11, 18, 16],
-        ids=[
-            '66ae6229ffbaa5975422455e',
-            '6314e875f7c98f1d344b2e3f',
-            '60ca846ffad77e5b1fee110a',
-            '60f722b3a83e22a28e18860e',
-        ],
-    ),
-    # row 1
-    dict(
-        groupid=26,
-        gender=[2, 1, 1, 2],
-        round2=[15, 16, 8, 16],
-        round3=[13, 25, 10, 16],
-        ids=[
-            '5a973b8235237b0001127686',
-            '5eff4094fad01549cec780bb',
-            '63d40af204ab71781d81b112',
-            '66ee1b8ee4da3710c1695515',
-        ],
-    ),
-    # row 2
-    dict(
-        groupid=28,
-        gender=[2, 1, 2, 1],
-        round2=[17, 18, 19, 16],
-        round3=[19, 19, 27, 17],
-        ids=[
-            '66919140828b8946afc029c5',
-            '62734ce38db73cd5bd81a36f',
-            '6755e799307c1a8afbb8c162',
-            '6522fa3ac0163b9e739d097d',
-        ],
-    ),
-    # row 3
-    dict(
-        groupid=35,
-        gender=[2, 1, 2, 1],
-        round2=[20, 18, 13, 10],
-        round3=[27, 28, 9, 13],
-        ids=[
-            '66be0314cbc4fc351df839a0',
-            '63cfee97e59ec37f870b287f',
-            '669677d986a5a20026bbf20e',
-            '64bbf16db125b5d6a2f3a911',
-        ],
-    ),
-    # row 4
-    dict(
-        groupid=178,
-        gender=[1, 2, 2, 1],
-        round2=[20, 10, 18, 13],
-        round3=[16, 5, 18, 17],
-        ids=[
-            '59067e147a22a80001849720',
-            '6636fd4bc3513a27d95c3e46',
-            '662fbae9b9b9d43471a00ef9',
-            '5c1ffe5295f978000173df84',
-        ],
-    ),
-]
+    chosen_ids = random.sample(ids, 20)
+    chosen_ids.append(1200)
+    random.shuffle(chosen_ids)
 
-T2_ROWS = [
-    # row 0
-    dict(
-        groupid=3,
-        gender=[2, 1, 1, 2],
-        round2=[13, 10, 14, 11],
-        round3=[16, 0, 18, 12],
-        ids=[
-            '66b1967c80dfbef628f49076',
-            '5de831cad4995d000c5fb540',
-            '5fa1636a77c875235bd8e1f6',
-            '65cb90ace80f886a058024ce',
-        ],
-    ),
-    # row 1
-    dict(
-        groupid=15,
-        gender=[2, 1, 2, 1],
-        round2=[18, 18, 17, 12],
-        round3=[20, 17, 16, 16],
-        ids=[
-            '6743e31b8d80b64c6fad696f',
-            '63d7b81d79044b73bfb50952',
-            '63dbddb434d075a0bff1dbc7',
-            '62fce9a6d7fa7bc8559d6ce1',
-        ],
-    ),
-    # row 2
-    dict(
-        groupid=58,
-        gender=[2, 1, 1, 2],
-        round2=[18, 17, 10, 17],
-        round3=[16, 12, 19, 17],
-        ids=[
-            '613a32539be30e10dca2c288',
-            '57160a57cd6ea20011dae249',
-            '5c345ebad4f77a0001a91ec0',
-            '6736d9badac6c2599d5b0c5d',
-        ],
-    ),
-    # row 3
-    dict(
-        groupid=73,
-        gender=[2, 1, 2, 1],
-        round2=[18, 9, 16, 16],
-        round3=[20, 10, 16, 16],
-        ids=[
-            '66e77c1f53b8d806313b5314',
-            '614c3ad2075d2710db4dc03e',
-            '5a8c5f67000dab00018cd8f0',
-            '665ceb52bf7bc5f5f2016e83',
-        ],
-    ),
-    # row 4
-    dict(
-        groupid=178,
-        gender=[1, 2, 2, 1],
-        round2=[20, 10, 18, 13],
-        round3=[20, 8, 16, 16],
-        ids=[
-            '68a741770ddcfded8f735e8e',
-            '647845ab90c460ec4a86efba',
-            '5eab170759f5390b776df5a1',
-            '62a0f99814d73df8032871a9',
-        ],
-    ),
-]
-
-
-def get_rows_for_treatment(treatment):
-    if treatment == 2:
-        return T2_ROWS
-    if treatment == 10:
-        return T10_ROWS
-    return None
+    return chosen_ids
 
 
 class C(CommonConstants):
@@ -189,90 +57,16 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     page_pass_time = models.FloatField()
 
-    Gender = models.StringField()
-
-    Round2_Mix = models.IntegerField(
-        choices=[[1, 'Easy Mix'], [2, 'Hard Mix']]
-    )
-
     incentivised_selection = models.IntegerField()
-    SelectionLine1 = models.IntegerField()
-    Selection1 = models.IntegerField()
-    Selection1_id = models.LongStringField()
 
-    SelectionLine2 = models.IntegerField()
-    Selection2 = models.IntegerField()
-    Selection2_id = models.LongStringField()
+    CQ1 = models.IntegerField(blank=True)
+    CQ1_wrong = models.IntegerField(initial=0)
+    CQ2 = models.IntegerField(blank=True)
+    CQ2_wrong = models.IntegerField(initial=0)
+    CQ3 = models.IntegerField(blank=True)
+    CQ3_wrong = models.IntegerField(initial=0)
 
-    SelectionLine3 = models.IntegerField()
-    Selection3 = models.IntegerField()
-    Selection3_id = models.LongStringField()
-
-    SelectionLine4 = models.IntegerField()
-    Selection4 = models.IntegerField()
-    Selection4_id = models.LongStringField()
-
-    SelectionLine5 = models.IntegerField()
-    Selection5 = models.IntegerField()
-    Selection5_id = models.LongStringField()
-
-    Selection1_group = models.IntegerField()
-    Selection2_group = models.IntegerField()
-    Selection3_group = models.IntegerField()
-    Selection4_group = models.IntegerField()
-    Selection5_group = models.IntegerField()
-
-    treatment = models.IntegerField()
-    bonus = models.IntegerField(initial=0)
-    moved_to_selection = models.IntegerField(initial=0)
-    assigned_id = models.IntegerField()
-
-    Round2 = models.IntegerField(initial=0)
-    Round2_Attempts = models.IntegerField(initial=0, blank=True)
-    Round3 = models.IntegerField(initial=0)
-    Round3_Attempts = models.IntegerField(initial=0, blank=True)
-
-    Choice = models.IntegerField(
-        choices=[[1, 'Payment Rule A'], [2, 'Payment Rule B']],
-        label='R3 Payment Rule Choice'
-    )
-
-    CQ1 = models.IntegerField(
-        choices=[
-            [1, 'Mix 1 only'],
-            [2, 'Mix 2 only'],
-            [3, 'Either Mix 1 or Mix 2'],
-        ],
-        label='In round 1, which mix could a participant have received?',
-        widget=widgets.RadioSelect
-    )
-    CQ1_incorrect = models.IntegerField(initial=0)
-    CQ1_incorrect2 = models.IntegerField(initial=0)
-
-    CQ2 = models.IntegerField(
-        choices=[
-            [1, 'Yes, I will see which mix each participant received'],
-            [2, 'No, I will only see their round 1 score'],
-        ],
-        label='Will you know which mix (Mix 1 or Mix 2) each participant received in round 1?',
-        widget=widgets.RadioSelect
-    )
-    CQ2_incorrect = models.IntegerField(initial=0)
-    CQ2_incorrect2 = models.IntegerField(initial=0)
-
-    CQ3 = models.IntegerField(
-        choices=[
-            [1, 'Only easy pairs'],
-            [2, 'Only hard pairs'],
-            [3, 'Either Mix 1 or Mix 2'],
-        ],
-        label='In round 2, what type of pairs will all participants face?',
-        widget=widgets.RadioSelect
-    )
-    CQ3_incorrect = models.IntegerField(initial=0)
-    CQ3_incorrect2 = models.IntegerField(initial=0)
-
-    cq_page_2 = models.IntegerField(initial=0)
+    cq_stage = models.IntegerField(initial=1)
 
     Comprehension_password = models.StringField(blank=False, label='Password')
 
@@ -339,93 +133,67 @@ def process_selection(player: Player, which_line: int, choice_field: str, id_fie
 class Selection_instructions(MyBasePage):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-        player.treatment = player.participant.Treatment
+        MyBasePage.before_next_page(player, timeout_happened)
         player.page_pass_time = time.time() + C.Min_round_length
-
-        mix_draw = random.randint(1, 2)
-        player.Round2_Mix = mix_draw
-        player.participant.R2_mix = mix_draw
 
         player.incentivised_selection = random.randint(1, 5)
         player.participant.incentivised_selection = player.incentivised_selection
 
+        quartet_ids = draw_quartet_id_array()
+        player.participant.quartet_ids = quartet_ids
+
 
 class Comprehension_Qs(MyBasePage):
-    extra_fields = ['CQ1', 'CQ2', 'CQ3']
-    form_fields = MyBasePage.form_fields + extra_fields
-
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened=False):
-        MyBasePage.before_next_page(player, timeout_happened)
-
-        if player.CQ1 != 3:
-            player.CQ1_incorrect = 1
-            player.CQ1 = 0
-
-        if player.CQ2 != 2:
-            player.CQ2_incorrect = 1
-            player.CQ2 = 0
-
-        if player.CQ3 != 2:
-            player.CQ3_incorrect = 1
-            player.CQ3 = 0
-
-        incorrect_index = (
-            player.CQ1_incorrect +
-            player.CQ2_incorrect +
-            player.CQ3_incorrect
-        )
-        if incorrect_index > 0:
-            player.cq_page_2 = 1
-
-
-class Comprehension_Qs2(MyBasePage):
-    extra_fields = ['CQ1', 'CQ2', 'CQ3']
+    extra_fields = ['CQ1', 'CQ2', 'CQ3', 'cq_stage']
     form_fields = MyBasePage.form_fields + extra_fields
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.cq_page_2 == 1
+        return player.cq_stage in [1, 2, 3]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        context = MyBasePage.vars_for_template(player)
+        context.update(cq_stage=player.cq_stage)
+        return context
+
+    @staticmethod
+    def error_message(player: Player, values):
+        stage = int(values.get('cq_stage') or 1)
+        pv = player.participant.vars
+
+        if stage == 1:
+            if values.get('CQ1') != 3:
+                pv['CQ1_wrong_temp'] = pv.get('CQ1_wrong_temp', 0) + 1
+                return {'CQ1': 'That is not correct. Please try again.'}
+
+        elif stage == 2:
+            if values.get('CQ2') != 2:
+                pv['CQ2_wrong_temp'] = pv.get('CQ2_wrong_temp', 0) + 1
+                return {'CQ2': 'That is not correct. Please try again.'}
+
+        elif stage == 3:
+            if values.get('CQ3') != 1:
+                pv['CQ3_wrong_temp'] = pv.get('CQ3_wrong_temp', 0) + 1
+                return {'CQ3': 'That is not correct. Please try again.'}
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened=False):
         MyBasePage.before_next_page(player, timeout_happened)
 
-        if player.CQ1 != 3:
-            player.CQ1_incorrect2 = 1
-        if player.CQ2 != 2:
-            player.CQ2_incorrect2 = 1
-        if player.CQ3 != 2:
-            player.CQ3_incorrect2 = 1
+        pv = player.participant.vars
+        player.CQ1_wrong = pv.get('CQ1_wrong_temp', 0)
+        player.CQ2_wrong = pv.get('CQ2_wrong_temp', 0)
+        player.CQ3_wrong = pv.get('CQ3_wrong_temp', 0)
+
+        if player.cq_stage < 3:
+            player.cq_stage += 1
+
+
 
 
 class SelectionsBegin(MyBasePage):
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        session_players = player.subsession.get_players()
-
-        same_treatment_passed_count = 0
-        for p in session_players:
-            if 'Treatment' not in p.participant.vars:
-                continue
-            if getattr(p, 'moved_to_selection', 0) != 1:
-                continue
-            if p.treatment == player.treatment:
-                same_treatment_passed_count += 1
-
-        player_id = (same_treatment_passed_count % 90) + 1
-        player.assigned_id = player_id
-
-        # random order of the 5 rows (for both t2 and t10)
-        indices = [0, 1, 2, 3, 4]
-        random.shuffle(indices)
-        player.SelectionLine1 = indices[0]
-        player.SelectionLine2 = indices[1]
-        player.SelectionLine3 = indices[2]
-        player.SelectionLine4 = indices[3]
-        player.SelectionLine5 = indices[4]
-
-        player.moved_to_selection = 1
+    pass
 
 
 class Selection1(MyBasePage):
@@ -552,15 +320,16 @@ class RedirectIncorrect(Page):
 page_sequence = [
     Selection_instructions,
     Comprehension_Qs,
-    Comprehension_Qs2,
+    Comprehension_Qs,
+    Comprehension_Qs,
     SelectionsBegin,
-    Selection1,
-    Selection2,
-    Selection3,
-    Selection4,
-    Selection5,
-    Correct,
-    RedirectCorrect,
-    Incorrect,
-    RedirectIncorrect,
+    #Selection1,
+    #Selection2,
+    #Selection3,
+    #Selection4,
+    #Selection5,
+    #Correct,
+    #RedirectCorrect,
+    #Incorrect,
+    #RedirectIncorrect,
 ]

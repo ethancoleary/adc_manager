@@ -1,195 +1,254 @@
 {{ block title }}
 {{ endblock }}
+
 {{ block content }}
-<link rel="stylesheet" href="{{static 'css/css.css'}}">
-<link rel="stylesheet" href="{{static 'css/modal.css'}}">
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
 <script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
 <script type="text/javascript" src="{{ static 'js/data_quality.js' }}"></script>
+
 <style>
-    table {
-    border-collapse: collapse;
-    width: 100%;
-    background-color: white;
+  .content-box {
+    max-width: 1100px;
   }
-  td {
-    border: none;
-    text-align: center;
-    vertical-align: top;
-    padding: 0px;
+
+  .qa-box {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 10px;
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto 20px auto;
+    border: 1px solid #e3e3e3;
+  }
+
+  .qa-box h4 {
+    margin-bottom: 14px;
+  }
+
+  .options-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .option-item {
+    width: 100%;
+  }
+
+  .option-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .option-label {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #212121;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.4;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .option-label:hover {
+    border-color: #99d6f2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  .option-input:checked + .option-label {
+    background-color: #e6f7ff;
+    border-color: #99d6f2;
+  }
+
+  .question-complete .option-input:checked + .option-label {
+    background-color: #d4edda;
+    border-color: #9fcdab;
+  }
+
+  .stage-hidden {
+    display: none;
+  }
+
+  .error-block {
+    margin-top: 10px;
   }
 </style>
+
 <div class="content-box box-info">
   <div class="section-header text-center">
     <h3>✅ Comprehension Check</h3>
     <hr class="section-divider">
   </div>
+
   <div class="section-box-nonhover box-neutral">
     <div class="section-header">
       <p>
-      Please answer the three questions below to confirm you have understood the procedure thus far.
-      You can review the instructions at any time by clicking the button below.
+        Please answer the three questions below to confirm you have understood the procedure thus far.
+        You can review the instructions at any time by clicking the button below.
       </p>
     </div>
   </div>
+
   <form method="post">
-      <div class="qa-box">
-  <h4>1. In round 1, which mix could a participant have received?</h4>
-        <br>
-  <center>
-    <table>
-      <tr>
-        <td style="width: 33%;">
-          <div class="q-label">Mix 1 only</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ1"
-               value=1
-               id="CQ1_1"
-               ></div>
-        </td>
-        <td style="width: 33%;">
-          <div class="q-label">Mix 2 only</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ1"
-               value=2
-               id="CQ1_2"
-               ></div>
-        </td>
-        <td style="width: 33%;">
-          <div class="q-label">Either Mix 1 or Mix 2</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ1"
-               value=3
-               id="CQ1_3"
-               ></div>
-        </td>
-      </tr>
-{{ formfield_errors 'CQ1' }}
-    </table>
-  </center>
-</div>
-      <br>
-      <div class="qa-box">
-  <h4>2. Will you know which mix (Mix 1 or Mix 2) each participant received in round 1?</h4>
-        <br>
-  <center>
-    <table>
-      <tr>
-        <td>
-          <div class="q-label">Yes, I will see which mix<br>each participant received</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ2"
-               value=1
-               id="CQ2_1"
-               ></div>
-        </td>
-        <td>
-          <div class="q-label">No, I will only see<br>their round 1 score</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ2"
-               value=2
-               id="CQ2_2"
-               ></div>
-        </td>
-      </tr>
-{{ formfield_errors 'CQ2' }}
-    </table>
-  </center>
-</div>
-      <br>
-      <div class="qa-box">
-  <h4>3. In round 2, what difficulty of pairs will all participants face?</h4>
-        <br>
-  <center>
-    <table>
-      <tr>
-        <td style="width: 33%;">
-          <div class="q-label">Only easy pairs</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ3"
-               value=1
-               id="CQ3_1"
-               ></div>
-        </td>
-        <td style="width: 33%;">
-          <div class="q-label">Only hard pairs</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ3"
-               value=2
-               id="CQ3_2"
-               ></div>
-        </td>
-        <td style="width: 33%;">
-          <div class="q-label">A mix of easy and hard pairs</div>
-          <div class="radio-wrapper"><input type="radio"
-               name="CQ3"
-               value=3
-               id="CQ3_3"
-               ></div>
-        </td>
-      </tr>
-{{ formfield_errors 'CQ3' }}
-    </table>
-  </center>
-</div>
-<br><br>
-  <div class="buttons-container">
-    <div class="instructions-box">
-      <p class="instructions-title">Instruction Buttons</p>
-      <div class="Instructions">
-        <a id="myBtn" onclick="open_modal(1)" class="otree-btn-next btn btn-primary">
-          Study Instructions
-        </a>
-        <a id="myBtn" onclick="open_modal(2)" class="otree-btn-next btn btn-primary">{{task}} task</a>
-        <a id="myBtn" onclick="open_modal(3)" class="otree-btn-next btn btn-primary">Selection instructions</a>
+    <input type="hidden" name="cq_stage" value="{{ cq_stage }}" id="id_cq_stage">
+
+    <div class="qa-box {% if cq_stage > 1 %}question-complete{% endif %} {% if cq_stage != 1 %}stage-hidden{% endif %}">
+      <h4>1. For each worker in each group, what information will you observe to help you make your decision?</h4>
+
+      <div class="options-vertical">
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ1" value="1" id="CQ1_1"
+                 {% if player.field_maybe_none('CQ1') == 1 %}checked{% endif %}
+                 {% if cq_stage > 1 %}disabled{% endif %}>
+          <label class="option-label" for="CQ1_1">Assigned avatar</label>
+        </div>
+
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ1" value="2" id="CQ1_2"
+                 {% if player.field_maybe_none('CQ1') == 2 %}checked{% endif %}
+                 {% if cq_stage > 1 %}disabled{% endif %}>
+          <label class="option-label" for="CQ1_2">Round 1 score</label>
+        </div>
+
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ1" value="3" id="CQ1_3"
+                 {% if player.field_maybe_none('CQ1') == 3 %}checked{% endif %}
+                 {% if cq_stage > 1 %}disabled{% endif %}>
+          <label class="option-label" for="CQ1_3">Round 1 score + assigned avatar</label>
+        </div>
+
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ1" value="4" id="CQ1_4"
+                 {% if player.field_maybe_none('CQ1') == 4 %}checked{% endif %}
+                 {% if cq_stage > 1 %}disabled{% endif %}>
+          <label class="option-label" for="CQ1_4">Round 1 score + the Mix of cards played (easy or hard)</label>
+        </div>
+      </div>
+
+      <div class="error-block">
+        {{ formfield_errors 'CQ1' }}
       </div>
     </div>
-    
-    <button id="NextButton" class="otree-btn-next btn btn-primary">Next</button>
-      </form>
-  </div>
+
+    <div class="qa-box {% if cq_stage > 2 %}question-complete{% endif %} {% if cq_stage != 2 %}stage-hidden{% endif %}">
+      <h4>2. Will you know which mix (1 or 2) each worker received in round 1?</h4>
+
+      <div class="options-vertical">
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ2" value="1" id="CQ2_1"
+                 {% if player.field_maybe_none('CQ2') == 1 %}checked{% endif %}
+                 {% if cq_stage > 2 %}disabled{% endif %}>
+          <label class="option-label" for="CQ2_1">Yes, I will see which mix each participant received</label>
+        </div>
+
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ2" value="2" id="CQ2_2"
+                 {% if player.field_maybe_none('CQ2') == 2 %}checked{% endif %}
+                 {% if cq_stage > 2 %}disabled{% endif %}>
+          <label class="option-label" for="CQ2_2">No, I will only see their round 1 score</label>
+        </div>
+      </div>
+
+      <div class="error-block">
+        {{ formfield_errors 'CQ2' }}
+      </div>
+    </div>
+
+    <div class="qa-box {% if cq_stage != 3 %}stage-hidden{% endif %}">
+      <h4>3. TRUE or FALSE, the workers are real Prolific participants?</h4>
+
+      <div class="options-vertical">
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ3" value="1" id="CQ3_1"
+                 {% if player.field_maybe_none('CQ3') == 1 %}checked{% endif %}>
+          <label class="option-label" for="CQ3_1">True</label>
+        </div>
+
+        <div class="option-item">
+          <input class="option-input" type="radio" name="CQ3" value="2" id="CQ3_2"
+                 {% if player.field_maybe_none('CQ3') == 2 %}checked{% endif %}>
+          <label class="option-label" for="CQ3_2">False</label>
+        </div>
+      </div>
+
+      <div class="error-block">
+        {{ formfield_errors 'CQ3' }}
+      </div>
+    </div>
+
+    <div class="buttons-container">
+      <div class="instructions-box">
+        <p class="instructions-title">Instruction Buttons</p>
+        <div class="Instructions">
+          <a onclick="open_modal(1)" class="otree-btn-next btn btn-primary">
+            Study Instructions
+          </a>
+          <a onclick="open_modal(2)" class="otree-btn-next btn btn-primary">
+            {{ task }} task
+          </a>
+          <a onclick="open_modal(3)" class="otree-btn-next btn btn-primary">
+            Selection instructions
+          </a>
+        </div>
+      </div>
+
+      <button id="NextButton" class="otree-btn-next btn btn-primary">
+        {% if cq_stage < 3 %}Submit answer{% else %}Next{% endif %}
+      </button>
+    </div>
+
+    <div style="display:none;">
+      {% for field in form %}
+        {% if field.name in hidden_fields %}
+          {{ formfield field.name }}
+          {{ formfield_errors field.name }}
+        {% endif %}
+      {% endfor %}
+
+    </div>
+  </form>
 </div>
-</div>
-<!-- Instruction Modal -->
+
 <div id="myModal1" class="modal">
   <div class="modal-content">
-      <div class="modal-header">
-        <h2>Instructions</h2>
-        <span class="close" onclick="span_click(1)">&times;</span>
-      </div>
+    <div class="modal-header">
+      <h2>Instructions</h2>
+      <span class="close" onclick="span_click(1)">&times;</span>
+    </div>
     <p style="padding: 0px">
-   {{include Instructions_path}}
+      {{ include Instructions_path }}
     </p>
   </div>
 </div>
+
 <div id="myModal2" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-          <h2>Task Instructions</h2>
-          <span class="close" onclick="span_click(2)">&times;</span>
-        </div>
-      <p style="padding: 0px">
-      {{include Task_instructions}}
-      </p>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Task Instructions</h2>
+      <span class="close" onclick="span_click(2)">&times;</span>
     </div>
+    <p style="padding: 0px">
+      {{ include Task_instructions }}
+    </p>
+  </div>
 </div>
 
 <div id="myModal3" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-          <h2>Selection Instructions</h2>
-          <span class="close" onclick="span_click(3)">&times;</span>
-        </div>
-      <p style="padding: 0px">
-      {{include Selection_instructions}}
-      </p>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Selection Instructions</h2>
+      <span class="close" onclick="span_click(3)">&times;</span>
     </div>
-</div>
-<div style="display:none;">
-  {% for field in form %}
-    {% if field.name in hidden_fields %}
-      {{ formfield field.name }}
-      {{ formfield_errors field.name }}
-    {% endif %}
-  {% endfor %}
+    <p style="padding: 0px">
+      {{ include Selection_instructions }}
+    </p>
+  </div>
 </div>
 {{ endblock }}

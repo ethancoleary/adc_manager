@@ -5,13 +5,6 @@ from otree.api import BaseConstants
 from otree.api import  models, widgets
 import json
 
-# %% Functions
-def get_treatment_part(part, player):
-    'returns the part of the treatment that is relevant for the player'
-    'i.e. if treatment="T1_Math_men" and part=1, it returns "Math"'
-    # print(player.participant.Treatment)
-    return player.participant.Treatmentstring.split('_')[part]
-
 
 
 
@@ -24,10 +17,6 @@ class CommonConstants(BaseConstants):
     Completion_fee = 3.50
     Max_Bonus = 10  
 
-    Piece_rate = 0.05
-    Tournament_rate1 = 4
-
-    Recruiter_Treatments = {3, 4, 5, 8, 11, 12, 13, 16}
 
     
     # Prolific links:
@@ -43,7 +32,6 @@ class CommonConstants(BaseConstants):
     Task_instructions_MM_path = "_templates/global/Task_instructions_MM.html"
     Task_instructions_ER_path = "_templates/global/Task_instructions_ER.html"
 
-RECRUITER_TREATMENTS = set(CommonConstants.Recruiter_Treatments)
 
 # %% Player
 # DOESNT WORK WITH PLAYER
@@ -69,20 +57,15 @@ class MyBasePage(Page):
          #       Instructions_path = CommonConstants.Instructions_male_path
         #else: Instructions_path = CommonConstants.Instructions_female_path
 
-        if player.participant.Treatment > 8:
-            Task_path = CommonConstants.Task_instructions_ER_path
-            Instructions_path = CommonConstants.Instructions_Manager_ER_path
-        else:
-            Task_path = CommonConstants.Task_instructions_MM_path
-            Instructions_path = CommonConstants.Instructions_Manager_MM_path
-        
-        piece_rate = CommonConstants.Piece_rate
-        tournament_rate1 = CommonConstants.Tournament_rate1 * piece_rate
 
-        if player.participant.Blur_warned == 1:
+        Task_path = CommonConstants.Task_instructions_MM_path
+        Instructions_path = CommonConstants.Instructions_Manager_MM_path
+
+
+        if player.participant.vars.get('Blur_warned', 0) == 1:
             player.blur_warned = 1
 
-        if player.participant.Treatment < 9:
+        if player.participant.treatment < 9:
             task = "Maths-Memory"
         else:
             task = "Emotion Recognition"
@@ -96,13 +79,7 @@ class MyBasePage(Page):
             'Task_path': Task_path,
             'Task_instructions': Task_path,
             'Selection_instructions': CommonConstants.Selection_Instructions,
-            'MathMemory': get_treatment_part(1, player),
             'task': task,
-            'Skill': get_treatment_part(1, player).lower(),
-
-            'piece_rate': "{:.2f}".format(piece_rate),
-            'tournament_rate1': "{:.2f}".format(tournament_rate1),
-
         }
         
         
@@ -116,12 +93,16 @@ class MyBasePage(Page):
         for page_name, count in page_counts.items():
             Blur_log[page_name] = Blur_log.get(page_name, 0) + count
         player.participant.vars['Blur_log'] = Blur_log
+        blur_count = player.field_maybe_none('blur_count') or 0
+
         player.participant.vars['Blur_count'] = (
-            player.participant.vars.get('Blur_count', 0)
-            + (player.blur_count or 0))
+                player.participant.vars.get('Blur_count', 0) + blur_count
+        )
         
         # if player has been warned in this page, we set the flag and keep track of it, if not we keep the previous value
         # TODO: decide if you want the bonus to be determined based on the blur_warned flag, if so, adjust your bonus logic accordingly
-        if player.blur_warned:
-            player.participant.Blur_warned = 1
+        blur_warned = player.field_maybe_none('blur_warned') or 0
+
+        if blur_warned == 1:
+            player.participant.vars['Blur_warned'] = 1
         

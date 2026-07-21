@@ -29,10 +29,27 @@
 
 <div class="content-box box-info">
 
-  <div class="section-header text-center">
-    <h3>Click on 'Start' to begin making your selections.</h3>
+  <div class="section-header">
+    <center>
+    <h3>Final survey</h3>
+      </center>
     <hr class="section-divider">
-    We ask that you complete these selections in one sitting and remain focused.
+   <p>
+     In the final part of the study, we will ask you some questions.
+   </p>
+    <p>
+      {{ if player.participant.treatment == 1 }}
+      Over the next 2 pages, you will be asked the make some guesses.
+      Each question carries a potential bonus payment rewarding how accurate your guesses are.
+      At the end of the study, one of these 2 pages will be chosen at random and you will receive your earned bonus payment from that page.
+      {{ endif }}
+      {{ if player.participant.treatment == 2 }}
+      Over the next 5 pages, you will be asked the make some guesses.
+      Each question carries a potential bonus payment rewarding how accurate your guesses are.
+      At the end of the study, one of these 5 pages will be chosen at random and you will receive your earned bonus payment from that page.
+      {{ endif }}
+    </p>
+
   </div>
 
   <form method="post">

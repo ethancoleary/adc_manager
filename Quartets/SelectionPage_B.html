@@ -1,0 +1,290 @@
+{{ block title }}
+{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<script type="text/javascript" src="{{ static 'js/data_quality.js' }}"></script>
+
+<style>
+  .workers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(170px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .worker-card {
+    position: relative;
+    background: #ffffff;
+    border: 2px solid #d7dbe2;
+    padding: 18px 16px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+  }
+
+  .worker-card::before,
+  .worker-card::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #f8f9fb; /* match surrounding page/card background */
+    z-index: 2;
+  }
+
+  .worker-card::before {
+    top: -2px;
+    left: -2px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+
+  .worker-card::after {
+    bottom: -2px;
+    right: -2px;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  }
+
+  .worker-card:hover {
+    border-color: #7aa7ff;
+    transform: translateY(-2px);
+  }
+
+  .worker-card.selected {
+    background: #dbeafe;
+    border-color: #0f63fd;
+  }
+
+  .worker-card.selected::before,
+  .worker-card.selected::after {
+    background: #f8f9fb;
+  }
+
+  .worker-label {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .worker-avatar img {
+    width: 120px;
+    height: auto;
+    max-height: 150px;
+    margin: 0 auto 14px;
+  }
+
+  .score-title {
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+
+  .score-value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .selection-message {
+    margin-top: 22px;
+    padding: 16px 18px;
+    background: #f4f8ff;
+    border-left: 4px solid #0f63fd;
+    display: none;
+  }
+
+  .selection-message.active {
+    display: block;
+  }
+
+  .confirm-wrap {
+    text-align: center;
+    margin-top: 22px;
+  }
+
+  .confirm-wrap #NextButton {
+    float: none !important;
+    display: inline-block !important;
+  }
+
+  @media (max-width: 900px) {
+    .workers-grid {
+      grid-template-columns: repeat(2, minmax(170px, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .workers-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="content-box box-info">
+
+  <div class="section-header text-center">
+    <h3>Attention Check</h3>
+    <hr class="section-divider">
+  </div>
+
+  <div class="section-box-nonhover box-white">
+    <div class="section-header">
+      <p>
+        Below you will see the workers in this group and their score from round 1. These workers are presented in a random order to you.
+      </p>
+      <p>
+        Recall that each worker faced either <em>mostly easy</em> or <em>mostly hard</em> sets in round 1.
+      </p>
+      <p>
+        <b>You need to select one worker.</b>
+        Your task is to select the worker in this group that you believe will score the highest in round 2 (when all the cards are hard).
+      </p>
+    </div>
+  </div>
+
+  <div class="section-box box-info">
+    <div class="section-header">
+      <p>This is an attention check, <strong>please select worker 2</strong>.</p>
+
+      <form id="selectionForm" method="post">
+        <input type="hidden" id="Selection" name="Selection" value="">
+
+        <div class="workers-grid">
+          <div class="worker-card" data-worker="1">
+            <div class="worker-label">Worker 1</div>
+            <div class="worker-avatar">
+              {{ if player.participant.treatment == 1 }}
+                <img src="{% static 'graphics/neutral_avatar.png' %}" alt="Worker 1 avatar">
+              {{ else }}
+                {{ if gender1 == 1 }}<img src="{% static 'graphics/male_avatar.png' %}" alt="Worker 1 avatar">{{ endif }}
+                {{ if gender1 == 2 }}<img src="{% static 'graphics/fem_avatar.png' %}" alt="Worker 1 avatar">{{ endif }}
+              {{ endif }}
+            </div>
+            <div class="score-title">Round 1 score</div>
+            <div class="score-value">{{ score1 }}</div>
+          </div>
+
+          <div class="worker-card" data-worker="2">
+            <div class="worker-label">Worker 2</div>
+            <div class="worker-avatar">
+              {{ if player.participant.treatment == 1 }}
+                <img src="{% static 'graphics/neutral_avatar.png' %}" alt="Worker 2 avatar">
+              {{ else }}
+                {{ if gender2 == 1 }}<img src="{% static 'graphics/male_avatar.png' %}" alt="Worker 2 avatar">{{ endif }}
+                {{ if gender2 == 2 }}<img src="{% static 'graphics/fem_avatar.png' %}" alt="Worker 2 avatar">{{ endif }}
+              {{ endif }}
+            </div>
+            <div class="score-title">Round 1 score</div>
+            <div class="score-value">{{ score2 }}</div>
+          </div>
+
+          <div class="worker-card" data-worker="3">
+            <div class="worker-label">Worker 3</div>
+            <div class="worker-avatar">
+              {{ if player.participant.treatment == 1 }}
+                <img src="{% static 'graphics/neutral_avatar.png' %}" alt="Worker 3 avatar">
+              {{ else }}
+                {{ if gender3 == 1 }}<img src="{% static 'graphics/male_avatar.png' %}" alt="Worker 3 avatar">{{ endif }}
+                {{ if gender3 == 2 }}<img src="{% static 'graphics/fem_avatar.png' %}" alt="Worker 3 avatar">{{ endif }}
+              {{ endif }}
+            </div>
+            <div class="score-title">Round 1 score</div>
+            <div class="score-value">{{ score3 }}</div>
+          </div>
+
+          <div class="worker-card" data-worker="4">
+            <div class="worker-label">Worker 4</div>
+            <div class="worker-avatar">
+              {{ if player.participant.treatment == 1 }}
+                <img src="{% static 'graphics/neutral_avatar.png' %}" alt="Worker 4 avatar">
+              {{ else }}
+                {{ if gender4 == 1 }}<img src="{% static 'graphics/male_avatar.png' %}" alt="Worker 4 avatar">{{ endif }}
+                {{ if gender4 == 2 }}<img src="{% static 'graphics/fem_avatar.png' %}" alt="Worker 4 avatar">{{ endif }}
+              {{ endif }}
+            </div>
+            <div class="score-title">Round 1 score</div>
+            <div class="score-value">{{ score4 }}</div>
+          </div>
+        </div>
+
+
+        <div id="selectionMessage" class="selection-message"></div>
+
+        <div class="confirm-wrap">
+          <button id="NextButton" class="otree-btn-next btn btn-primary" disabled>
+            Confirm selection
+          </button>
+        </div>
+
+        <div style="display:none">
+          {% for field in form %}
+            {% if field.name in hidden_fields %}
+              {{ formfield field.name }}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="buttons-container">
+    <div class="instructions-box">
+      <p class="instructions-title">Instruction Buttons</p>
+      <div class="Instructions">
+        <a onclick="open_modal(1)" class="otree-btn-next btn btn-primary">Study Instructions</a>
+        <a onclick="open_modal(2)" class="otree-btn-next btn btn-primary">Task Instructions</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="myModal2" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Task Instructions</h2>
+      <span class="close" onclick="span_click(2)">&times;</span>
+    </div>
+    <div class="modal-body">
+      {{ include Task_instructions }}
+    </div>
+  </div>
+</div>
+
+<div id="myModal1" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Study Instructions</h2>
+      <span class="close" onclick="span_click(1)">&times;</span>
+    </div>
+    <div class="modal-body">
+      {{ include Instructions_path }}
+    </div>
+  </div>
+</div>
+
+<script>
+const cards = document.querySelectorAll('.worker-card');
+const input = document.getElementById('Selection');
+const confirmBtn = document.getElementById('NextButton');
+const selectionMessage = document.getElementById('selectionMessage');
+
+cards.forEach(card => {
+    card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('selected'));
+
+        card.classList.add('selected');
+
+        const workerNum = card.getAttribute('data-worker');
+        input.value = workerNum;
+        confirmBtn.disabled = false;
+
+        selectionMessage.classList.add('active');
+        selectionMessage.innerHTML =
+    `You have selected worker ${workerNum}.<br>
+    If you do not select worker number 2, then you will fail the attention check and may be rejected from the study.`;
+    });
+});
+</script>
+{{ endblock }}

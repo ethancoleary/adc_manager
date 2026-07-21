@@ -7,9 +7,9 @@ SESSION_CONFIGS = [
 
          app_sequence=[
              'Intro_Round1',
-             #'Intro_Round1_P',
-             #'Selections',
-             'Selections_F'
+             #'Selections_F',
+             #'Quartets',
+             'Survey1'
          ],
 
          num_demo_participants=2,
@@ -44,11 +44,12 @@ SESSION_CONFIG_DEFAULTS = dict(
 
 PARTICIPANT_FIELDS = [
      'Promised',
-    'Comprehension_passed', 
+    'Comprehension_passed', 'treatment',
     'Attention_passed', 'Attention_1', 'Attention_2', 'Attention_3',
-    'Treatmentstring', 'Treatment', 'Gender', 'Choice',
+        'Gender', 'Choice',
     'Blur_count', 'Blur_log', 'Blur_warned', 'R1_score', 'R2_score', 'R3_score',
-    'round_for_payment', 'page_for_payment', 'R2_mix', 'incentivised_selection'
+    'round_for_payment', 'page_for_payment', 'R2_mix', 'incentivised_selection',
+    'quartet_ids',
 
 ]
 SESSION_FIELDS = ['Total_quotas', 'Quota_4']
