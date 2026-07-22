@@ -60,7 +60,9 @@
     height: auto;
   }
 
-  .question-hidden {
+  .question-hidden,
+  .intro-hidden,
+  .second-next-hidden {
     display: none;
   }
 
@@ -82,29 +84,41 @@
     <hr class="section-divider">
   </div>
 
-  <div class="section-box-nonhover box-neutral">
+  <div class="section-box-nonhover box-info2">
     <div class="section-header">
       <p>
-        For this question, we have drawn <b>10 random workers</b> from our sample <b>who scored 16 in round 1</b>.
-        <br><br>
+        For this question, we have drawn: <br>
+        <center><b>10 random workers</b> from our sample <b>who scored 16 in round 1</b>.</center>
+      </p>
+    </div>
+
+    <div id="topBoxExtra" class="intro-hidden">
+      <p>
         We have ordered them according to their score in round 2: how many matching pairs they found in the hard set.
       </p>
-      <img src="{{ static 'graphics/neutral_lineup.png' }}"
-           alt="Female avatar lineup"
+
+      <img src="{{ static 'graphics/blueneutral_lineup.png' }}"
+           alt="Neutral lineup"
            class="full-width-lineup">
+
+      <p>
+        In the above, all workers scored the same in round 2.
+        The worker in position 1 found the fewest matching pairs in round 2, while the worker in position 10 found the most in round 2.
+      </p>
+
+      <p>
+        It may be useful for you to know that no worker scored more than 33 in round 2.
+      </p>
     </div>
-    <p>
-      In the above, all workers scored the same in round 2.
-      The worker in position 1 found the fewest matching pairs in round 2, while the worker in position 10 found the most in round 2.
-    </p>
-    <p>
-      It may be useful for you to know that no worker scored more than 33 in round 2.
-    </p>
   </div>
 
   <form method="post">
 
-    <div class="start-button-wrap" id="startButtonWrap">
+    <div class="start-button-wrap" id="firstNextWrap">
+      <button type="button" id="showTopBoxBtn" class="btn btn-primary">Next</button>
+    </div>
+
+    <div class="start-button-wrap second-next-hidden" id="secondNextWrap">
       <button type="button" id="showQuestionBtn" class="btn btn-primary">Next</button>
     </div>
 
@@ -115,8 +129,8 @@
         and no more than the round 2 score of the worker in <b>position 6</b> (green), then you will receive a bonus of £0.30.
       </div>
       <br>
-      <img src="{{ static 'graphics/neutral_lineup_50.png' }}"
-           alt="Female avatar lineup 50"
+      <img src="{{ static 'graphics/blueneutral_lineup_50.png' }}"
+           alt="Neutral lineup 50"
            class="full-width-lineup">
       <br>
 
@@ -155,23 +169,32 @@
 </div>
 
 <script>
+  const showTopBoxBtn = document.getElementById('showTopBoxBtn');
   const showQuestionBtn = document.getElementById('showQuestionBtn');
-  const startButtonWrap = document.getElementById('startButtonWrap');
+  const firstNextWrap = document.getElementById('firstNextWrap');
+  const secondNextWrap = document.getElementById('secondNextWrap');
+  const topBoxExtra = document.getElementById('topBoxExtra');
   const question1Box = document.getElementById('question1Box');
   const q1Input = document.getElementById('id_n_50p_sig');
   const finalSubmitWrap = document.getElementById('finalSubmitWrap');
 
   function hasValue(input) {
-    return input.value.trim() !== '';
+    return input && input.value.trim() !== '';
   }
 
   function updateSubmitButton() {
     finalSubmitWrap.style.display = hasValue(q1Input) ? 'block' : 'none';
   }
 
+  showTopBoxBtn.addEventListener('click', () => {
+    topBoxExtra.style.display = 'block';
+    firstNextWrap.style.display = 'none';
+    secondNextWrap.style.display = 'block';
+  });
+
   showQuestionBtn.addEventListener('click', () => {
     question1Box.style.display = 'block';
-    startButtonWrap.style.display = 'none';
+    secondNextWrap.style.display = 'none';
     q1Input.focus();
     updateSubmitButton();
   });

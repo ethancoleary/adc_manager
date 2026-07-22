@@ -36,6 +36,7 @@ def sample_sorted_r3scores(csv_name):
 
 class Player(BasePlayer):
     gender1 = models.IntegerField()
+    sob_gender1 = models.IntegerField()
 
     decision_bonus = models.IntegerField()
     bonus = models.FloatField(initial=0)
@@ -103,15 +104,15 @@ class Introduction(MyBasePage):
         MyBasePage.before_next_page(player, timeout_happened)
 
         player.gender1 = random.randint(1, 2)
+        player.sob_gender1 = random.randint(1, 2)
 
         player.m_array = json.dumps(sample_sorted_r3scores('male_full.csv'))
         player.m_array_signal = json.dumps(sample_sorted_r3scores('male_signal.csv'))
         player.f_array = json.dumps(sample_sorted_r3scores('female_full.csv'))
         player.f_array_signal = json.dumps(sample_sorted_r3scores('female_signal.csv'))
 
-        # placeholder until you decide the neutral-source CSVs
-        player.n_array = json.dumps([])
-        player.n_array_signal = json.dumps([])
+        player.n_array = json.dumps(sample_sorted_r3scores('all_full.csv'))
+        player.n_array_signal = json.dumps(sample_sorted_r3scores('all_signal.csv'))
 
         if player.participant.treatment == 1:
             player.decision_bonus = random.randint(1,2)
@@ -209,7 +210,7 @@ class distribution_females1_q2(MyBasePage):
         upper = arr[8]
 
         if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
+            if player.f_25p is not None and lower <= player.f_25p <= upper:
                 player.bonus += 0.3
 
 class distribution_females1_q3(MyBasePage):
@@ -227,7 +228,7 @@ class distribution_females1_q3(MyBasePage):
         upper = arr[2]
 
         if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
+            if player.f_75p is not None and lower <= player.f_75p <= upper:
                 player.bonus += 0.3
 
 class distribution_q1(MyBasePage):
@@ -467,6 +468,22 @@ class SOB(MyBasePage):
     def before_next_page(player, timeout_happened=False):
         player.participant.survey_bonus = player.bonus
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.participant.treatment == 2 and player.sob_gender1==1
+
+class SOB2(MyBasePage):
+    form_model = 'player'
+    form_fields = MyBasePage.form_fields + ['sob']
+
+    @staticmethod
+    def before_next_page(player, timeout_happened=False):
+        player.participant.survey_bonus = player.bonus
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.participant.treatment == 2 and player.sob_gender1==2
+
 ###################
 ### DISTRIBUTIONS 1
 ###################
@@ -558,7 +575,7 @@ class distribution_females2_q2(MyBasePage):
         upper = arr[8]
 
         if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
+            if player.f_75p is not None and lower <= player.f_75p <= upper:
                 player.bonus += 0.3
 
 class distribution_females2_q3(MyBasePage):
@@ -576,7 +593,7 @@ class distribution_females2_q3(MyBasePage):
         upper = arr[2]
 
         if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
+            if player.f_25p is not None and lower <= player.f_25p <= upper:
                 player.bonus += 0.3
 
 ###############
@@ -721,6 +738,7 @@ page_sequence = [Introduction,
                  signal_q3,
 
                 SOB,
+                 SOB2,
 
                 distribution_males2_q1,
                 distribution_males2_q2,

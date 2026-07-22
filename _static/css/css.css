@@ -63,6 +63,7 @@ label[for="id_ai_catch_answer"] {
   --secondary: #81C784;     /* Soft green */
   --calm: #e6ffe6;          /* Light green background */
   --info: #e6f7ff;          /* Soft blue background */
+  --info2: #f2fbff;          /* Soft blue background */
   --task: #f0f0f0;          /* Light grey */
   --warn: #fff3cd;          /* Light yellow for alerts */
   --neutral: #f9f9f9;       /* Default light background */
