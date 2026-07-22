@@ -7,21 +7,16 @@ SESSION_CONFIGS = [
 
          app_sequence=[
              'Intro_Round1',
-             #'Selections_F',
-             #'Quartets',
-             'Survey1'
+             'Selections_F',
+             'Quartets',
+             'Survey1',
+            'Survey2'
          ],
 
          num_demo_participants=2,
 
-         completionlinkscreenout=
+         completionlink=
          'https://app.prolific.com/submissions/complete?cc=C11YBC1V',
-        completionlinkbot=
-         'https://app.prolific.com/submissions/complete?cc=CBYOJ77R',
-         completionlinkcorrect=
-         'https://app.prolific.com/submissions/complete?cc=C1HUMCM8',
-        completionlinkincorrect=
-         'https://app.prolific.com/submissions/complete?cc=CVV31FSN',
 
          )
 
@@ -48,11 +43,10 @@ PARTICIPANT_FIELDS = [
     'Attention_passed', 'Attention_1', 'Attention_2', 'Attention_3',
         'Gender', 'Choice',
     'Blur_count', 'Blur_log', 'Blur_warned', 'R1_score', 'R2_score', 'R3_score',
-    'round_for_payment', 'page_for_payment', 'R2_mix', 'incentivised_selection',
-    'quartet_ids',
+    'round_for_payment', 'page_for_payment', 'R2_mix', 'incentivised_selection', 'main_bonus',
+    'quartet_ids', 'survey_bonus', 'bonus_page'
 
 ]
-SESSION_FIELDS = ['Total_quotas', 'Quota_4']
 
 
 

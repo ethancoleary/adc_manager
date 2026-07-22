@@ -1,0 +1,229 @@
+{{ block title }}
+{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<script type="text/javascript" src="{{ static 'js/data_quality.js' }}"></script>
+
+<style>
+  .content-box {
+    max-width: 1100px;
+  }
+
+  .qa-box {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 10px;
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto 20px auto;
+    border: 1px solid #e3e3e3;
+  }
+
+  .qa-box h4 {
+    margin-bottom: 14px;
+  }
+
+  .question-text {
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+
+  .option-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .vertical-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-btn {
+    min-width: 120px;
+    max-width: 420px;
+    width: auto;
+    padding: 10px 14px;
+    border: 2px solid #d9d9d9;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #222;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1.3;
+  }
+
+  .option-btn:hover {
+    border-color: #99d6f2;
+    background: #f7fcff;
+  }
+
+  .option-btn.selected {
+    background: #dbeafe;
+    border-color: #0f63fd;
+    color: #0b3b91;
+  }
+
+  .error-block {
+    margin-top: 12px;
+    text-align: center;
+  }
+
+  .final-submit-wrap {
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+</style>
+
+<div class="content-box box-info">
+  <div class="section-header text-center">
+    <h3>Final questions (Page 2/3)</h3>
+    <hr class="section-divider">
+  </div>
+
+  <form method="post">
+
+    <div class="qa-box">
+      <div class="question-text">
+        What is the highest level of education that you have achieved/are currently studying for?
+      </div>
+
+      <div class="option-buttons vertical-buttons" data-target="id_education_uk">
+        <button type="button" class="option-btn" data-value="1">GCSEs/O Levels or equivalent</button>
+        <button type="button" class="option-btn" data-value="2">A Levels or equivalent</button>
+        <button type="button" class="option-btn" data-value="3">Bachelor degree or equivalent</button>
+        <button type="button" class="option-btn" data-value="4">Master degree or equivalent</button>
+        <button type="button" class="option-btn" data-value="5">Doctorate</button>
+      </div>
+
+      <input
+        type="hidden"
+        id="id_education_uk"
+        name="education_uk"
+        value="{{ player.field_maybe_none('education_uk') or '' }}"
+      >
+
+      <div class="error-block">
+        {{ formfield_errors 'education_uk' }}
+      </div>
+    </div>
+
+    <div class="qa-box">
+      <div class="question-text">
+        What is your ethnicity?
+      </div>
+
+      <div class="option-buttons vertical-buttons" data-target="id_ethnicity_uk">
+        <button type="button" class="option-btn" data-value="1">Asian or Asian British</button>
+        <button type="button" class="option-btn" data-value="2">Black, Black British, Caribbean or African</button>
+        <button type="button" class="option-btn" data-value="3">Mixed or multiple ethnic groups</button>
+        <button type="button" class="option-btn" data-value="4">White</button>
+        <button type="button" class="option-btn" data-value="5">Other</button>
+      </div>
+
+      <input
+        type="hidden"
+        id="id_ethnicity_uk"
+        name="ethnicity_uk"
+        value="{{ player.field_maybe_none('ethnicity_uk') or '' }}"
+      >
+
+      <div class="error-block">
+        {{ formfield_errors 'ethnicity_uk' }}
+      </div>
+    </div>
+
+    <div class="qa-box">
+      <div class="question-text">
+        On a scale from very left to very right, how would you define your political leaning?
+      </div>
+
+      <div class="option-buttons" data-target="id_political_uk">
+        <button type="button" class="option-btn" data-value="1">Very left</button>
+        <button type="button" class="option-btn" data-value="2">Somewhat left</button>
+        <button type="button" class="option-btn" data-value="3">Central</button>
+        <button type="button" class="option-btn" data-value="4">Somewhat right</button>
+        <button type="button" class="option-btn" data-value="5">Very right</button>
+      </div>
+
+      <input
+        type="hidden"
+        id="id_political_uk"
+        name="political_uk"
+        value="{{ player.field_maybe_none('political_uk') or '' }}"
+      >
+
+      <div class="error-block">
+        {{ formfield_errors 'political_uk' }}
+      </div>
+    </div>
+
+    <div class="final-submit-wrap" id="finalSubmitWrap">
+      <button id="NextButton" class="otree-btn-next btn btn-primary">
+        Continue
+      </button>
+    </div>
+
+    <div style="display:none;">
+      {{ for field in form }}
+        {{ if field.name in hidden_fields }}
+          {{ formfield field.name }}
+          {{ formfield_errors field.name }}
+        {{ endif }}
+      {{ endfor }}
+    </div>
+  </form>
+</div>
+
+<script>
+  const educationInput = document.getElementById('id_education_uk');
+  const ethnicityInput = document.getElementById('id_ethnicity_uk');
+  const politicalInput = document.getElementById('id_political_uk');
+  const finalSubmitWrap = document.getElementById('finalSubmitWrap');
+  const buttonGroups = document.querySelectorAll('.option-buttons');
+
+  function updateSubmitButton() {
+    const allAnswered =
+      educationInput.value !== '' &&
+      ethnicityInput.value !== '' &&
+      politicalInput.value !== '';
+
+    finalSubmitWrap.style.display = allAnswered ? 'block' : 'none';
+  }
+
+  function updateSelectedState(group) {
+    const targetId = group.dataset.target;
+    const input = document.getElementById(targetId);
+    const buttons = group.querySelectorAll('.option-btn');
+
+    buttons.forEach(button => {
+      button.classList.toggle('selected', button.dataset.value === input.value);
+    });
+  }
+
+  buttonGroups.forEach(group => {
+    const targetId = group.dataset.target;
+    const input = document.getElementById(targetId);
+    const buttons = group.querySelectorAll('.option-btn');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        input.value = button.dataset.value;
+        updateSelectedState(group);
+        updateSubmitButton();
+      });
+    });
+
+    updateSelectedState(group);
+  });
+
+  updateSubmitButton();
+</script>
+{{ endblock }}

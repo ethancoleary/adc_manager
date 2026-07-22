@@ -60,15 +60,6 @@
     height: auto;
   }
 
-  .question-hidden {
-    display: none;
-  }
-
-  .start-button-wrap {
-    text-align: center;
-    margin: 24px 0;
-  }
-
   .final-submit-wrap {
     text-align: center;
     margin-top: 20px;
@@ -78,24 +69,23 @@
 
 <div class="content-box box-info">
   <div class="section-header text-center">
-    <h3>Survey Page 2</h3>
+    <h3>Survey Page 4</h3>
     <hr class="section-divider">
   </div>
 
-  <div class="section-box-nonhover box-info">
+  <div class="section-box-nonhover box-neutral">
     <div class="section-header">
       <p>
-        For this question, we have drawn <b>10 random female workers</b> from our sample <b>who scored 16 in round 1</b>.
+        For this question, we have drawn <b>10 random male workers</b> from our sample.
         <br><br>
         We have ordered them according to their score in round 2: how many matching pairs they found in the hard set.
       </p>
-      <img src="{{ static 'graphics/fem_avatar_lineup.png' }}"
+      <img src="{{ static 'graphics/male_avatar_lineup.png' }}"
            alt="Female avatar lineup"
            class="full-width-lineup">
     </div>
     <p>
-      In the above, all workers scored the same in round 2.
-      The female in position 1 found the fewest matching pairs in round 2, while the female in position 10 found the most in round 2.
+      In the above, the male in position 1 found the fewest matching pairs in round 2, while the male in position 10 found the most in round 2.
     </p>
     <p>
       It may be useful for you to know that no worker scored more than 33 in round 2.
@@ -104,19 +94,15 @@
 
   <form method="post">
 
-    <div class="start-button-wrap" id="startButtonWrap">
-      <button type="button" id="showQuestionBtn" class="btn btn-primary">Next</button>
-    </div>
-
-    <div class="qa-box question-hidden" id="question1Box">
-      <h4>Question 1</h4>
+    <div class="qa-box">
+      <h4>Question 2</h4>
       <div class="question-text">
-        <strong>State a number</strong>. If that number is no less than the round 2 score of the female in <b>position 5</b> (purple)
-        and no more than the round 2 score of the female in <b>position 6</b> (green), then you will receive a bonus of £0.30.
+        <strong>State a number</strong>. If that number is no less than the round 2 score of the male in <b>position 8</b> (purple)
+        and no more than the round 2 score of the male in <b>position 9</b> (green), then you will receive a bonus of £0.30.
       </div>
       <br>
-      <img src="{{ static 'graphics/fem_avatar_lineup_50.png' }}"
-           alt="Female avatar lineup 50"
+      <img src="{{ static 'graphics/male_avatar_lineup_75.png' }}"
+           alt="Male avatar lineup 75"
            class="full-width-lineup">
       <br>
 
@@ -125,15 +111,15 @@
           <input
             type="number"
             class="number-answer"
-            id="id_f_50p_sig"
-            name="f_50p_sig"
-            value="{{ player.field_maybe_none('f_50p_sig') or '' }}"
+            id="id_m_75p"
+            name="m_75p"
+            value="{{ player.field_maybe_none('m_75p') or '' }}"
           >
         </center>
       </div>
 
       <div class="error-block">
-        {{ formfield_errors 'f_50p_sig' }}
+        {{ formfield_errors 'm_75p' }}
       </div>
     </div>
 
@@ -155,10 +141,7 @@
 </div>
 
 <script>
-  const showQuestionBtn = document.getElementById('showQuestionBtn');
-  const startButtonWrap = document.getElementById('startButtonWrap');
-  const question1Box = document.getElementById('question1Box');
-  const q1Input = document.getElementById('id_f_50p_sig');
+  const q2Input = document.getElementById('id_m_75p');
   const finalSubmitWrap = document.getElementById('finalSubmitWrap');
 
   function hasValue(input) {
@@ -166,17 +149,10 @@
   }
 
   function updateSubmitButton() {
-    finalSubmitWrap.style.display = hasValue(q1Input) ? 'block' : 'none';
+    finalSubmitWrap.style.display = hasValue(q2Input) ? 'block' : 'none';
   }
 
-  showQuestionBtn.addEventListener('click', () => {
-    question1Box.style.display = 'block';
-    startButtonWrap.style.display = 'none';
-    q1Input.focus();
-    updateSubmitButton();
-  });
-
-  q1Input.addEventListener('input', updateSubmitButton);
+  q2Input.addEventListener('input', updateSubmitButton);
   updateSubmitButton();
 </script>
 {{ endblock }}

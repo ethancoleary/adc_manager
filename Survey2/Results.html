@@ -1,0 +1,102 @@
+{{ block title }}
+{{ endblock }}
+
+{{ block content }}
+<link rel="stylesheet" href="{{ static 'css/css.css' }}">
+<link rel="stylesheet" href="{{ static 'css/modal.css' }}">
+<script type="text/javascript" src="{{ static 'js/Script_modal.js' }}"></script>
+<script type="text/javascript" src="{{ static 'js/data_quality.js' }}"></script>
+
+<style>
+  .start-button-wrap {
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  .start-button-wrap #NextButton,
+  .start-button-wrap .otree-btn-next {
+    float: none !important;
+    display: inline-block !important;
+    margin: 0 auto !important;
+    position: static !important;
+  }
+
+  form {
+    width: 100%;
+  }
+</style>
+
+<div class="content-box box-info">
+
+  <div class="section-header">
+    <center>
+      <h3>Results</h3>
+    </center>
+    <hr class="section-divider">
+
+    <p>
+      Thank you for taking part in this study.
+    </p>
+
+    <p>
+      You made decisions regarding 21 groups in the main part of the study.
+      A random draw has been made and you will be paid according to your decision regarding group {{ player.participant.incentivised_selection }}.
+
+      {{ if player.participant.main_bonus == 1 }}
+        Your selected worker in this group was one of the workers who scored the highest in round 3 among those in group {{ player.participant.incentivised_selection }}.
+        Therefore you will receive a bonus of £1.00.
+      {{ endif }}
+
+      {{ if player.participant.main_bonus != 1 }}
+        Your selected worker in this group was not one of the workers who scored the highest in round 3 among those in group {{ player.participant.incentivised_selection }}.
+      {{ endif }}
+    </p>
+
+    <p>
+      For your responses to our survey questions, page {{ player.participant.bonus_page }} has been randomly selected for you.
+      You will receive a bonus equating to how accurate your response(s) were on this page.
+
+      {{ if player.participant.bonus_page != 3 }}
+        Your bonus from this page is equal to
+
+        {{ if player.participant.survey_bonus == 0 }}
+          £0.00.
+        {{ endif }}
+
+        {{ if player.participant.survey_bonus == 0.3 }}
+          £0.30.
+        {{ endif }}
+
+        {{ if player.participant.survey_bonus == 0.6 }}
+          £0.60.
+        {{ endif }}
+
+        {{ if player.participant.survey_bonus == 0.9 }}
+          £0.90.
+        {{ endif }}
+      {{ endif }}
+
+      {{ if player.participant.bonus_page == 3 }}
+        As the question on this page relates to how other participants' responses in this study, your final bonus payment will be computed once data collection is complete.
+      {{ endif }}
+    </p>
+
+    <p>
+      You will receive your applicable bonus payment(s) once data collection is complete.
+      We estimate that this will be in 2 weeks.
+    </p>
+
+    <p>
+      Please click on 'Finish study' to be redirected back to Prolific.
+    </p>
+  </div>
+
+    <div class="start-button-wrap">
+      <button id="NextButton" class="otree-btn-next btn btn-primary">Finish study</button>
+    </div>
+  </form>
+
+</div>
+
+{{ endblock }}

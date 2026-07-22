@@ -146,11 +146,13 @@ class SelectionPage(MyBasePage):
         player.selected_worker_r2score = getattr(player, f'w{choice}_r2score')
         player.selected_worker_r3score = selected_r3score
 
-        if (
-            player.participant.vars.get('incentivised_selection') == player.round_number
-            and selected_r3score == player.top_r3score
-        ):
-            player.bonus = 1
+        if player.participant.vars.get('incentivised_selection') == player.round_number:
+            if selected_r3score == player.top_r3score:
+                player.bonus = 1
+                player.participant.main_bonus = 1
+            else:
+                player.bonus = 0
+                player.participant.main_bonus = 0
 
 
 class SelectionPage_A(MyBasePage):
@@ -166,10 +168,10 @@ class SelectionPage_A(MyBasePage):
             gender2=2,  # female
             gender3=2,  # female
             gender4=1,  # male
-            score1=10,
-            score2=15,
-            score3=8,
-            score4=12,
+            score1='a',
+            score2='b',
+            score3='c',
+            score4='d',
         )
         return context
 
@@ -190,10 +192,10 @@ class SelectionPage_B(MyBasePage):
             gender2=1,  # female
             gender3=2,  # female
             gender4=1,  # male
-            score1=7,
-            score2=5,
-            score3=12,
-            score4=11,
+            score1='a',
+            score2='b',
+            score3='c',
+            score4='d',
         )
         return context
 
@@ -211,6 +213,6 @@ class MidPage(MyBasePage):
 
 page_sequence = [
     SelectionPage,
-    SelectionPageA,
-    SelectionPageB,
+    SelectionPage_A,
+    SelectionPage_B,
     MidPage]

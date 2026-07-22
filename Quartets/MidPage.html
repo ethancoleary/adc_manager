@@ -17,7 +17,7 @@
   .start-button-wrap #NextButton,
   .start-button-wrap .otree-btn-next {
     float: none !important;
-    display: none !important;
+    display: none;
     margin: 0 auto !important;
     position: static !important;
   }
@@ -37,7 +37,7 @@
       As one group will be chosen at random at the end to determine your bonus payment, it is important that you stay focused during your selections.
     </p>
     <p>
-      After 7 seconds, the submit button will appear and you can continue with your selections.
+      After 10 seconds, the submit button will appear and you can continue with your selections.
     </p>
   </div>
 
@@ -92,6 +92,6 @@
 
   setTimeout(() => {
     nextButton.style.display = 'inline-block';
-  }, 7000);
+  }, 10000);
 </script>
 {{ endblock }}
