@@ -18,6 +18,15 @@ SESSION_CONFIGS = [
          completionlink=
          'https://app.prolific.com/submissions/complete?cc=C11YBC1V',
 
+         # TODO: replace with the dedicated Prolific screen-out completion code
+         # before launch. Placeholder for now so RedirectScreenOut does not crash.
+         completionlinkscreenout=
+         'https://app.prolific.com/submissions/complete?cc=SCREENOUT_CODE_TODO',
+
+         # Flagged bots are sent to the Prolific homepage to return manually.
+         completionlinkbot=
+         'https://app.prolific.com/',
+
          )
 
 

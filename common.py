@@ -65,7 +65,10 @@ class MyBasePage(Page):
         if player.participant.vars.get('Blur_warned', 0) == 1:
             player.blur_warned = 1
 
-        if player.participant.treatment < 9:
+        # treatment is unset for screened-out participants (e.g. gender
+        # 'Other'/'Rather not say'), so read it defensively.
+        treatment = player.participant.vars.get('treatment')
+        if treatment is None or treatment < 9:
             task = "Maths-Memory"
         else:
             task = "Emotion Recognition"

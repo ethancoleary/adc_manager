@@ -269,7 +269,10 @@ class Round_1_play_hard(MyBasePage):
 
 
 class Practice_Score(MyBasePage):
-    pass
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.Allowed == 1
 
 
 class ScreenOut(Page):
@@ -304,7 +307,7 @@ class RedirectBot(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.Allowed == 0 and player.Bot == 0
+        return player.Allowed == 0 and player.Bot == 1
 
     @staticmethod
     def js_vars(player):

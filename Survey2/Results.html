@@ -25,6 +25,49 @@
   form {
     width: 100%;
   }
+
+  .bonus-summary {
+    width: 100%;
+    max-width: 480px;
+    margin: 20px auto 8px auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 1rem;
+  }
+
+  .bonus-summary th,
+  .bonus-summary td {
+    padding: 12px 18px;
+    text-align: left;
+    border-bottom: 1px solid #ececec;
+  }
+
+  .bonus-summary thead th {
+    background-color: #f5f7fa;
+    font-weight: 600;
+  }
+
+  .bonus-summary td.amount,
+  .bonus-summary th.amount {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .bonus-summary tfoot td {
+    font-weight: 700;
+    border-top: 2px solid #d9d9d9;
+    border-bottom: none;
+  }
+
+  .bonus-note {
+    max-width: 480px;
+    margin: 0 auto 8px auto;
+    font-size: 0.85rem;
+    color: #666;
+  }
 </style>
 
 <div class="content-box box-info">
@@ -58,29 +101,42 @@
       You will receive a bonus equating to how accurate your response(s) were on this page.
 
       {{ if player.participant.bonus_page != 3 }}
-        Your bonus from this page is equal to
-
-        {{ if player.participant.survey_bonus == 0 }}
-          £0.00.
-        {{ endif }}
-
-        {{ if player.participant.survey_bonus == 0.3 }}
-          £0.30.
-        {{ endif }}
-
-        {{ if player.participant.survey_bonus == 0.6 }}
-          £0.60.
-        {{ endif }}
-
-        {{ if player.participant.survey_bonus == 0.9 }}
-          £0.90.
-        {{ endif }}
+        Your bonus from this page is equal to £{{ survey_bonus_display }}.
       {{ endif }}
 
       {{ if player.participant.bonus_page == 3 }}
         As the question on this page relates to how other participants' responses in this study, your final bonus payment will be computed once data collection is complete.
       {{ endif }}
     </p>
+
+    <table class="bonus-summary">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th class="amount">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ for row in bonus_rows }}
+          <tr>
+            <td>{{ row.source }}</td>
+            <td class="amount">{{ row.amount }}</td>
+          </tr>
+        {{ endfor }}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td class="amount">{{ bonus_total_display }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    {{ if survey_pending }}
+      <p class="bonus-note">
+        * Your survey-questions bonus will be computed once data collection is complete, so it is not included in the total above.
+      </p>
+    {{ endif }}
 
     <p>
       You will receive your applicable bonus payment(s) once data collection is complete.

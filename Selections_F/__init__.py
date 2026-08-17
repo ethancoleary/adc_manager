@@ -239,7 +239,7 @@ class Selection_instructions(MyBasePage):
     def before_next_page(player: Player, timeout_happened):
         MyBasePage.before_next_page(player, timeout_happened)
         player.page_pass_time = time.time() + C.Min_round_length
-        player.incentivised_selection = random.randint(1, 5)
+        player.incentivised_selection = random.randint(1, 21)  # one of the 21 Quartets rounds
         player.participant.incentivised_selection = player.incentivised_selection
 
 

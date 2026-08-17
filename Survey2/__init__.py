@@ -1,4 +1,5 @@
 from otree.api import *
+from common import CommonConstants
 
 
 doc = """
@@ -121,7 +122,38 @@ class Experience(Page):
         }
 
 class Results(Page):
-    pass
+    @staticmethod
+    def vars_for_template(player: Player):
+        p = player.participant
+
+        completion_fee = CommonConstants.Completion_fee
+        hiring_bonus = 1.00 if p.main_bonus == 1 else 0.00
+        # bonus_page == 3 is the second-order-belief block, scored post-hoc.
+        survey_pending = p.bonus_page == 3
+        survey_bonus = p.survey_bonus
+
+        rows = [
+            dict(source='Completion payment', amount=f"£{completion_fee:.2f}"),
+            dict(source='Hiring decision', amount=f"£{hiring_bonus:.2f}"),
+        ]
+
+        settled_total = completion_fee + hiring_bonus
+        if survey_pending:
+            rows.append(dict(source='Survey questions', amount='To be determined*'))
+            # Survey amount unknown, so the total is the settled part plus a marker.
+            total_display = f"£{settled_total:.2f} + survey bonus*"
+        else:
+            rows.append(dict(source='Survey questions', amount=f"£{survey_bonus:.2f}"))
+            total_display = f"£{settled_total + survey_bonus:.2f}"
+
+        return {
+            # Format once here to avoid fragile float-equality in the template
+            # (e.g. 0.3 + 0.3 + 0.3 == 0.9 is False in floating point).
+            'survey_bonus_display': f"{survey_bonus:.2f}",
+            'bonus_rows': rows,
+            'bonus_total_display': total_display,
+            'survey_pending': survey_pending,
+        }
 
 class Redirect(Page):
 

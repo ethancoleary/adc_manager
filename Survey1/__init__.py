@@ -96,9 +96,32 @@ class Player(BasePlayer):
         return json.loads(self.n_array_signal or '[]')
 
 
+# ---- Bonus helper -----------------------------------------------------------
+# Exactly ONE "block" of survey decisions is paid, chosen at random via
+# player.decision_bonus (set in Introduction). A block is three questions, so
+# the maximum survey bonus is 3 x £0.30 = £0.90. Block numbering:
+#   1 = distributions, first  gender block  (neutral distributions for treatment 1)
+#   2 = signals,       first  gender block  (neutral signals       for treatment 1)
+#   3 = second-order belief (SOB)           (paid post-hoc, no in-app accrual)
+#   4 = distributions, second gender block  (treatment 2 only)
+#   5 = signals,       second gender block  (treatment 2 only)
+#
+# A page only awards its £0.30 when its own block was the one drawn, so a
+# participant can never be paid for both the distribution and the signal block.
+def award_block_bonus(player, block, field_name, values, lo, hi):
+    if player.decision_bonus == block:
+        answer = player.field_maybe_none(field_name)
+        if answer is not None and values[lo] <= answer <= values[hi]:
+            player.bonus += 0.3
+    # Keep the participant-level total in sync after every graded page so the
+    # Results page always has a value regardless of which path was taken.
+    player.participant.survey_bonus = player.bonus
+
+
 class Introduction(MyBasePage):
     form_model = 'player'
     form_fields = MyBasePage.form_fields
+
     @staticmethod
     def before_next_page(player, timeout_happened=False):
         MyBasePage.before_next_page(player, timeout_happened)
@@ -115,13 +138,14 @@ class Introduction(MyBasePage):
         player.n_array_signal = json.dumps(sample_sorted_r3scores('all_signal.csv'))
 
         if player.participant.treatment == 1:
-            player.decision_bonus = random.randint(1,2)
+            player.decision_bonus = random.randint(1, 2)
         else:
             player.decision_bonus = random.randint(1, 5)
 
         player.participant.bonus_page = player.decision_bonus
+        player.participant.survey_bonus = 0
 
-### DISTRIBUTIONS 1
+### DISTRIBUTIONS 1  (block 1)
 
 class distribution_males1_q1(MyBasePage):
     form_model = 'player'
@@ -133,13 +157,7 @@ class distribution_males1_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.m_50p is not None and lower <= player.m_50p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'm_50p', player.m_array_list(), 4, 5)
 
 class distribution_males1_q2(MyBasePage):
     form_model = 'player'
@@ -151,13 +169,7 @@ class distribution_males1_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.m_75p is not None and lower <= player.m_75p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'm_75p', player.m_array_list(), 7, 8)
 
 class distribution_males1_q3(MyBasePage):
     form_model = 'player'
@@ -169,13 +181,7 @@ class distribution_males1_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.m_25p is not None and lower <= player.m_25p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'm_25p', player.m_array_list(), 1, 2)
 
 class distribution_females1_q1(MyBasePage):
     form_model = 'player'
@@ -187,13 +193,7 @@ class distribution_females1_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'f_50p', player.f_array_list(), 4, 5)
 
 class distribution_females1_q2(MyBasePage):
     form_model = 'player'
@@ -205,13 +205,7 @@ class distribution_females1_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.f_25p is not None and lower <= player.f_25p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'f_75p', player.f_array_list(), 7, 8)
 
 class distribution_females1_q3(MyBasePage):
     form_model = 'player'
@@ -223,13 +217,7 @@ class distribution_females1_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.f_75p is not None and lower <= player.f_75p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'f_25p', player.f_array_list(), 1, 2)
 
 class distribution_q1(MyBasePage):
     form_model = 'player'
@@ -241,13 +229,7 @@ class distribution_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.n_50p is not None and lower <= player.n_50p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'n_50p', player.n_array_list(), 4, 5)
 
 class distribution_q2(MyBasePage):
     form_model = 'player'
@@ -259,13 +241,7 @@ class distribution_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.n_75p is not None and lower <= player.n_75p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'n_75p', player.n_array_list(), 7, 8)
 
 class distribution_q3(MyBasePage):
     form_model = 'player'
@@ -277,16 +253,10 @@ class distribution_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.n_25p is not None and lower <= player.n_25p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 1, 'n_25p', player.n_array_list(), 1, 2)
 
 ###############
-### SIGNALS 1
+### SIGNALS 1  (block 2)
 ###############
 class signal_males1_q1(MyBasePage):
     form_model = 'player'
@@ -298,13 +268,7 @@ class signal_males1_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.m_50p_sig is not None and lower <= player.m_50p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'm_50p_sig', player.m_array_signal_list(), 4, 5)
 
 class signal_males1_q2(MyBasePage):
     form_model = 'player'
@@ -316,13 +280,7 @@ class signal_males1_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.m_75p_sig is not None and lower <= player.m_75p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'm_75p_sig', player.m_array_signal_list(), 7, 8)
 
 
 class signal_males1_q3(MyBasePage):
@@ -335,13 +293,7 @@ class signal_males1_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.m_25p_sig is not None and lower <= player.m_25p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'm_25p_sig', player.m_array_signal_list(), 1, 2)
 
 class signal_females1_q1(MyBasePage):
     form_model = 'player'
@@ -353,13 +305,7 @@ class signal_females1_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.f_50p_sig is not None and lower <= player.f_50p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'f_50p_sig', player.f_array_signal_list(), 4, 5)
 
 
 class signal_females1_q2(MyBasePage):
@@ -372,13 +318,7 @@ class signal_females1_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.f_75p_sig is not None and lower <= player.f_75p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'f_75p_sig', player.f_array_signal_list(), 7, 8)
 
 
 class signal_females1_q3(MyBasePage):
@@ -391,13 +331,7 @@ class signal_females1_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.f_25p_sig is not None and lower <= player.f_25p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'f_25p_sig', player.f_array_signal_list(), 1, 2)
 
 
 class signal_q1(MyBasePage):
@@ -410,13 +344,7 @@ class signal_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_signal_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.n_50p_sig is not None and lower <= player.n_50p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'n_50p_sig', player.n_array_signal_list(), 4, 5)
 
 
 class signal_q2(MyBasePage):
@@ -429,13 +357,7 @@ class signal_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_signal_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.n_75p_sig is not None and lower <= player.n_75p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'n_75p_sig', player.n_array_signal_list(), 7, 8)
 
 
 class signal_q3(MyBasePage):
@@ -448,17 +370,11 @@ class signal_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.n_array_signal_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.n_25p_sig is not None and lower <= player.n_25p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 2, 'n_25p_sig', player.n_array_signal_list(), 1, 2)
 
 
 ###################
-### SOB
+### SOB  (block 3 - paid post-hoc, no in-app accrual)
 ###################
 class SOB(MyBasePage):
     form_model = 'player'
@@ -470,7 +386,7 @@ class SOB(MyBasePage):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.participant.treatment == 2 and player.sob_gender1==1
+        return player.participant.treatment == 2 and player.sob_gender1 == 1
 
 class SOB2(MyBasePage):
     form_model = 'player'
@@ -482,10 +398,10 @@ class SOB2(MyBasePage):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.participant.treatment == 2 and player.sob_gender1==2
+        return player.participant.treatment == 2 and player.sob_gender1 == 2
 
 ###################
-### DISTRIBUTIONS 1
+### DISTRIBUTIONS 2  (block 4)
 ###################
 
 class distribution_males2_q1(MyBasePage):
@@ -498,13 +414,7 @@ class distribution_males2_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.m_50p is not None and lower <= player.m_50p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'm_50p', player.m_array_list(), 4, 5)
 
 class distribution_males2_q2(MyBasePage):
     form_model = 'player'
@@ -516,13 +426,7 @@ class distribution_males2_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.m_75p is not None and lower <= player.m_75p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'm_75p', player.m_array_list(), 7, 8)
 
 class distribution_males2_q3(MyBasePage):
     form_model = 'player'
@@ -534,13 +438,7 @@ class distribution_males2_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.m_25p is not None and lower <= player.m_25p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'm_25p', player.m_array_list(), 1, 2)
 
 class distribution_females2_q1(MyBasePage):
     form_model = 'player'
@@ -552,13 +450,7 @@ class distribution_females2_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.f_50p is not None and lower <= player.f_50p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'f_50p', player.f_array_list(), 4, 5)
 
 class distribution_females2_q2(MyBasePage):
     form_model = 'player'
@@ -570,13 +462,7 @@ class distribution_females2_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.f_75p is not None and lower <= player.f_75p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'f_75p', player.f_array_list(), 7, 8)
 
 class distribution_females2_q3(MyBasePage):
     form_model = 'player'
@@ -588,16 +474,10 @@ class distribution_females2_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.f_25p is not None and lower <= player.f_25p <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 4, 'f_25p', player.f_array_list(), 1, 2)
 
 ###############
-### SIGNALS 1
+### SIGNALS 2  (block 5)
 ###############
 class signal_males2_q1(MyBasePage):
     form_model = 'player'
@@ -609,13 +489,7 @@ class signal_males2_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.m_50p_sig is not None and lower <= player.m_50p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 5, 'm_50p_sig', player.m_array_signal_list(), 4, 5)
 
 class signal_males2_q2(MyBasePage):
     form_model = 'player'
@@ -627,13 +501,7 @@ class signal_males2_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.m_75p_sig is not None and lower <= player.m_75p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 5, 'm_75p_sig', player.m_array_signal_list(), 7, 8)
 
 
 class signal_males2_q3(MyBasePage):
@@ -646,15 +514,7 @@ class signal_males2_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.m_array_signal_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.m_25p_sig is not None and lower <= player.m_25p_sig <= upper:
-                player.bonus += 0.3
-
-        player.participant.survey_bonus = player.bonus
+        award_block_bonus(player, 5, 'm_25p_sig', player.m_array_signal_list(), 1, 2)
 
 class signal_females2_q1(MyBasePage):
     form_model = 'player'
@@ -666,13 +526,7 @@ class signal_females2_q1(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[4]
-        upper = arr[5]
-
-        if player.decision_bonus == 1:
-            if player.f_50p_sig is not None and lower <= player.f_50p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 5, 'f_50p_sig', player.f_array_signal_list(), 4, 5)
 
 
 class signal_females2_q2(MyBasePage):
@@ -685,13 +539,7 @@ class signal_females2_q2(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[7]
-        upper = arr[8]
-
-        if player.decision_bonus == 1:
-            if player.f_75p_sig is not None and lower <= player.f_75p_sig <= upper:
-                player.bonus += 0.3
+        award_block_bonus(player, 5, 'f_75p_sig', player.f_array_signal_list(), 7, 8)
 
 
 class signal_females2_q3(MyBasePage):
@@ -704,15 +552,7 @@ class signal_females2_q3(MyBasePage):
 
     @staticmethod
     def before_next_page(player, timeout_happened=False):
-        arr = player.f_array_signal_list()
-        lower = arr[1]
-        upper = arr[2]
-
-        if player.decision_bonus == 1:
-            if player.f_25p_sig is not None and lower <= player.f_25p_sig <= upper:
-                player.bonus += 0.3
-
-        player.participant.survey_bonus = player.bonus
+        award_block_bonus(player, 5, 'f_25p_sig', player.f_array_signal_list(), 1, 2)
 
 
 page_sequence = [Introduction,
